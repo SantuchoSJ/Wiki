@@ -4,6 +4,16 @@ const router = express.Router();
 const Page  = require('../models/Page');
 
 
+router.get("/search", function (req, res){
+    let arreglo= req.query.tag.split(" ")
+    
+    
+   Page.findByTag(arreglo)
+    .then(pages=>{
+        res.render("index",  { pages: [...pages] })
+      })
+})
+
 
 
 router.get("/", function(req, res){
@@ -12,10 +22,10 @@ router.get("/", function(req, res){
         res.render("index",  { pages: [...pages] })
     }
     )
+    
 })
 
 router.post("/", function(req, res){
-    console.log(typeof(req.body.tags))
     User.findOrCreate({where: {name: req.body.name, email: req.body.email}})
     .then(usuario => {
         let autor= usuario[0]
@@ -46,6 +56,10 @@ router.get("/add", function(req, res){
     res.render("addpage")
 })
 
+
+
+
+
 router.get("/:urltitle", function(req, res){
     Page.findOne({
         where: {
@@ -70,6 +84,14 @@ router.get("/:urltitle", function(req, res){
     })
 })
 
+
+router.get("/:urltitle/similares", function(req, res){
+    let urlTitle= req.params.urltitle
+    Page.prototype.findSimilar(urlTitle)
+    .then(pages=>{
+        res.render("index",  { pages: [...pages] })
+      })
+})
 
 
 

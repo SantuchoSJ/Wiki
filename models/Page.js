@@ -1,6 +1,7 @@
 const { STRING } = require("sequelize");
 const S= require("sequelize");
 const db= require("../db")
+const Op = S.Op
 
 class Page extends S.Model {}
 
@@ -42,7 +43,35 @@ Page.addHook('beforeValidate', function(page) {
   }
 })
 
+Page.findByTag= function(parametro){
+  return Page.findAll({
+    where : {
+        tags: {
+            [Op.overlap]: parametro
+        }
+    }    
+})
+}
 
+Page.prototype.findSimilar= function(parametro){
+   return Page.findOne({
+    where: {
+        urltitle: parametro
+    }})
+    .then(pages=>{
+      return Page.findAll({
+        where : {
+            tags: {
+                [Op.overlap]: pages.tags
+            },
+            urltitle: {
+              [Op.ne]: pages.urltitle
+            }
+        }    
+    })
+    }
+  )
+}
 
 
 

@@ -7,6 +7,9 @@ const { User, Page } = require('../models');
 
 
 //////////////////////
+router.get("/search", function(req, res){
+    res.render("searchByTag")
+})
 router.use("/users", users)
 router.use("/wiki", wiki)
 router.get("/", function(req, res){
